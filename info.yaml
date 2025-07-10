@@ -1,15 +1,16 @@
 # Tiny Tapeout project information
+# Tiny Tapeout project information
 project:
-title:  "4-bit Sequential Multiplier"  # Project title
+  title:        "4-bit Sequential Multiplier"  # Project title
   author:       "CUTM"
   discord:      "yourdiscord#12345"  # optional, leave blank if not using
   description:  "Multiplies two 4-bit numbers sequentially and outputs an 8-bit product."
   language:     "Verilog"
   clock_hz:     100000000  # 100 MHz clock
 
-  tiles: "1x1"
+  tiles:        "1x1"
 
-  top_module:  "tt_um_seq_mul"
+  top_module:   "tt_um_seq_mul"
 
   source_files:
     - "project.v"
