@@ -13,7 +13,7 @@ project:
 
 # The pinout of your project. Leave unused pins blank.
 pinout:
-  ui[0]: "a0 (LSB)"
+ ui[0]: "a0 (LSB)"
   ui[1]: "a1"
   ui[2]: "a2"
   ui[3]: "a3 (MSB)"
@@ -39,7 +39,6 @@ pinout:
   uio[5]: ""
   uio[6]: ""
   uio[7]: ""
-
 # Do not change!
 yaml_version: 6
 
