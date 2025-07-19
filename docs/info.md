@@ -9,11 +9,11 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-This project implements a 4-bit sequential multiplier that takes two 4-bit inputs a and b and produces an 8-bit product op. The multiplication is performed serially using a combination of registers, a 4-bit adder, and a counter to iterate over each bit of the multiplier. On asserting the start signal, the system begins multiplying the two inputs over four clock cycles. Partial products are accumulated using an adder and shifted registers. Once the final result is computed, it is output through uo_out.
+This 4-bit sequential multiplier uses the shift-and-add algorithm to multiply two 4-bit unsigned numbers over four clock cycles. When the start signal is pulsed high, the module captures the inputs A and B and initialises the internal state. It then iteratively examines each bit of B, and if a bit is set, it adds a left-shifted version of A (based on the current bit position) to an accumulator. This process continues for four cycles, after which the final 8-bit product is available on the output. This design is efficient in terms of area and ideal for resource-constrained environments, such as Tiny Tapeout.
 
 ## How to test
 
-To test the project, provide 4-bit operands a and b through ui_in[3:0] and ui_in[7:4], respectively, and assert the start signal through uio_in[0]. The result of the multiplication will appear on uo_out after a few clock cycles. The module can be simulated using a Verilog testbench (tb.v) or a Python Cocotb script (test.py) that provides input stimuli and checks the expected output.
+To test the 4-bit sequential multiplier, apply the 4-bit operands A and B to the input pins ui[3:0] and ui[7:4] respectively, and pulse the start signal on uio[0] high for one clock cycle to initiate the multiplication. After four clock cycles, the 8-bit result will be available on the output pins uo[7:0]. You can verify the correctness by comparing the output with the expected product of A and B. For automated testing, a Cocotb-based Python testbench is provided, which applies a set of known test vectors, waits for the multiplication to complete, and checks that the result matches the expected output.
 
 ## External hardware
 
