@@ -2,46 +2,60 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import cocotb
-from cocotb.clock import Clock
-from cocotb.triggers import RisingEdge, ClockCycles
+from cocotb.triggers import RisingEdge, FallingEdge, Timer
+from cocotb.result import TestFailure
 
+async def reset_dut(dut):
+    dut.reset.value = 1
+    await Timer(20, units="ns")
+    dut.reset.value = 0
+    await RisingEdge(dut.clk)
+
+async def apply_inputs(dut, a, b):
+    dut.ui_in.value = a
+    dut.uio_in.value = b
+    dut.in_valid.value = 1
+    await RisingEdge(dut.clk)
+    dut.in_valid.value = 0
 
 @cocotb.test()
-async def test_project(dut):
-    """Testbench for 4-bit sequential multiplier (tt_um_seq_mul)"""
-
-    dut._log.info("Starting sequential multiplier testbench...")
-
-    # Set up a 100 MHz clock
-    clock = Clock(dut.clk, 10, units="ns")
-    cocotb.start_soon(clock.start())
-
-    # Initial values
-    dut.rst_n.value = 1
-    dut.ena.value = 1
+async def test_sequential_multiplier(dut):
+    dut._log.info("Starting test for 4-bit sequential multiplier")
+    dut.clk.value = 0
+    dut.in_valid.value = 0
     dut.ui_in.value = 0
     dut.uio_in.value = 0
 
-    await ClockCycles(dut.clk, 2)
+    # Clock generation
+    async def clk_gen():
+        while True:
+            dut.clk.value = not dut.clk.value
+            await Timer(5, units="ns")
 
-    async def run_test(a, b, expected):
-        # Load inputs: ui_in = {b[3:0], a[3:0]}
-        dut.ui_in.value = (b << 4) | a
+    cocotb.start_soon(clk_gen())
 
-        # Start pulse
-        dut.uio_in.value = 1
-        await ClockCycles(dut.clk, 1)
-        dut.uio_in.value = 0
+    await reset_dut(dut)
 
-        # Wait enough cycles for multiplication to complete
-        await ClockCycles(dut.clk, 20)
+    test_vectors = [
+        (9, 6, 54),
+        (15, 15, 225),
+        (7, 0, 0),
+        (0, 13, 0),
+        (3, 4, 12)
+    ]
 
-        actual = dut.uo_out.value.integer
-        dut._log.info(f"{a} x {b} = {actual} (Expected: {expected})")
-        assert actual == expected, f"FAILED: {a} x {b} = {actual}, expected {expected}"
+    for a, b, expected in test_vectors:
+        await apply_inputs(dut, a, b)
 
-    # Run a few tests
-    await run_test(3, 2, 6)
-    await run_test(4, 5, 20)
-    await run_test(0, 15, 0)
-    await run_test(15, 15, 225)
+        # Wait until out_done is high
+        for _ in range(10):
+            await RisingEdge(dut.clk)
+            if dut.out_done.value == 1:
+                break
+
+        result = int(dut.uo_out.value)
+        dut._log.info(f"{a} * {b} = {result}, expected = {expected}")
+        assert result == expected, f"FAIL: {a} * {b} = {result}, expected {expected}"
+
+    dut._log.info("All test vectors passed.")
+
