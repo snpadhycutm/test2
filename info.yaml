@@ -13,14 +13,14 @@ project:
 
 # The pinout of your project. Leave unused pins blank.
 pinout:
- ui[0]: "a0 (LSB)"
+ ui[0]: "a0"
   ui[1]: "a1"
   ui[2]: "a2"
-  ui[3]: "a3 (MSB)"
-  ui[4]: "b0 (LSB)"
+  ui[3]: "a3"
+  ui[4]: "b0"
   ui[5]: "b1"
   ui[6]: "b2"
-  ui[7]: "b3 (MSB)"
+  ui[7]: "b3"
 
   uo[0]: "product bit 0 (LSB)"
   uo[1]: "product bit 1"
