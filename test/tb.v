@@ -1,6 +1,6 @@
 `default_nettype none
 `timescale 1ns / 1ps
-module tb_sequential_multiplier_4bit;
+module tb;
 
     reg clk = 0;
     reg reset = 0;
