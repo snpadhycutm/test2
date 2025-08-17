@@ -13,7 +13,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Run test
-        uses: TinyTapeout/tt-gds-action/test@ttihp25b
+      - name: Run equivalence test
+        uses: TinyTapeout/tt-gds-action/eqy_test@ttihp25b
         with:
           pdk: ihp
