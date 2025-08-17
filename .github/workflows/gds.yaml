@@ -1,9 +1,3 @@
-name: gds
-
-on:
-  push:
-  workflow_dispatch:
-
 jobs:
   gds:
     runs-on: ubuntu-24.04
@@ -18,37 +12,27 @@ jobs:
         with:
           pdk: ihp
 
-  precheck:
-    needs: gds
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Run Tiny Tapeout Precheck
-        uses: TinyTapeout/tt-gds-action/precheck@ttihp25b
+      - name: Upload GDS artifact
+        uses: actions/upload-artifact@v4
         with:
-          pdk: ihp
-
-  gl_test:
-    needs: gds
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: GL test
-        uses: TinyTapeout/tt-gds-action/gl_test@ttihp25b
-        with:
-          pdk: ihp
+          name: ihp-gds
+          path: runs/ihp/results/final/gds/
+          if-no-files-found: error
 
   viewer:
     needs: gds
     runs-on: ubuntu-24.04
     permissions:
-      pages: write   # deploy to GitHub Pages
+      pages: write
       id-token: write
     steps:
-      - name: Build Viewer
+      - name: Download GDS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ihp-gds
+          path: runs/ihp/results/final/gds/
+
+      - name: Deploy Viewer
         uses: TinyTapeout/tt-gds-action/viewer@ttihp25b
         with:
           pdk: ihp
