@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-module tt_um_sequential_multiplier_4bit (
+module tt_um_seq_mul (
     input  wire        clk,
     input  wire        reset,
     input  wire [7:0]  ui_in,     // ui_in[3:0] = A (4-bit input)
