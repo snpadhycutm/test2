@@ -14,7 +14,7 @@ module tb;
     wire out_done;
 
     // DUT instantiation
-    tt_um_sequential_multiplier_4bit dut (
+    tt_um_seq_mul dut (
         .clk(clk),
         .reset(reset),
         .ui_in(ui_in),
