@@ -1,29 +1,54 @@
-name: gds-viewer
+name: gds
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
-  viewer:
+  gds:
     runs-on: ubuntu-24.04
-    permissions:
-      pages: write   # to deploy to GitHub Pages
-      id-token: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Build GDS Viewer
-        uses: TinyTapeout/tt-gds-action/viewer@ttihp25b
+      - name: Build GDS
+        uses: TinyTapeout/tt-gds-action@ttihp25b
         with:
           pdk: ihp
 
-      - name: Upload GDS Viewer artifact
-        uses: actions/upload-pages-artifact@v3
+  precheck:
+    needs: gds
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Run Tiny Tapeout Precheck
+        uses: TinyTapeout/tt-gds-action/precheck@ttihp25b
         with:
-          path: ./viewer   # output path from tt-gds-action
+          pdk: ihp
 
-      - name: Deploy GDS Viewer to GitHub Pages
-        uses: actions/deploy-pages@v4
+  gl_test:
+    needs: gds
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: GL test
+        uses: TinyTapeout/tt-gds-action/gl_test@ttihp25b
+        with:
+          pdk: ihp
+
+  viewer:
+    needs: gds
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write   # deploy to GitHub Pages
+      id-token: write
+    steps:
+      - name: Build Viewer
+        uses: TinyTapeout/tt-gds-action/viewer@ttihp25b
+        with:
+          pdk: ihp
